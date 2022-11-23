@@ -45,12 +45,6 @@ public abstract class BaseController <E, S extends BaseService<E, ?>>{
 	public ResponseEntity<?> deleteById(@RequestAttribute Long id){
 		return ResponseEntity.ok(this.service.deleteById(id));
 	}
-	
-	
-	
-//	@PutMapping()
-//	public ResponseEntity<E> update(E entity){
-//		return this.service.save(entity);
-//	}
+
 	
 }
