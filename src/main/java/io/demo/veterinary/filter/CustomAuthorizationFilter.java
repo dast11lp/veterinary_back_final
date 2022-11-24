@@ -56,6 +56,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter{
 				String email = this.jwtUtil.jwtVerifier(jwt);
 				UserDetails userDetails = this.myUserDetailService.loadUserByUsername(email);
 				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+				System.err.println(authToken);
 				if(SecurityContextHolder.getContext().getAuthentication() == null) {
 					SecurityContextHolder.getContext().setAuthentication(authToken);
 				}

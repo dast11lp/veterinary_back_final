@@ -1,10 +1,15 @@
 package io.demo.veterinary.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +31,8 @@ import io.demo.veterinary.service.VeterinarianService;
 @RequestMapping("appointment")
 @CrossOrigin({"*"})
 public class AppointmentController extends BaseController<Appointment, AppointmentService> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
 	@Autowired
 	private VeterinarianService vetService;
@@ -38,7 +45,6 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 	@Override
 	public ResponseEntity<?> create(@RequestBody Appointment appointment) throws Exception {
-		
 		
 		if (appointment.getPet() != null)
 			return ResponseEntity.ok("no se debe asignar mascotá");
@@ -81,8 +87,9 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 		this.appointmentService.findById(null);
 		return super.update(entity);
 	}
+
 	
-	@GetMapping("/cancel/{idPet}/{idAppointment}")
+	@PutMapping("/cancel/{idPet}/{idAppointment}")
 	public ResponseEntity<?> cancelAppointment(@PathVariable Long idPet, @PathVariable Long idAppointment) {
 		
 //		Appointment appointment = this.appointmentService.updatebyId(idAppointment);
@@ -99,7 +106,7 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 												     appointment.getProcedure(),
 												     appointment.getDescription(),
 												     appointment.getPrescription(),
-												     null,
+												     appointment.getVeterinarian(),
 												     null);
 		
 		
@@ -109,16 +116,26 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 	
 	@PutMapping("request")
 	public ResponseEntity<?> requestAppointment(@RequestParam Long idPet,@RequestParam Long idAppointment) {
+		Map<String, String> response = new HashMap<>();
 		Pet pet = null;
 		Appointment appointment = null;
 		pet = this.petService.findById(idPet);
-		if (pet == null)
-			return ResponseEntity.ok("la mascota no se encuentra en la base de datos");
+		if (pet == null) {
+			response.put("Message", "la mascota no se encuentra en la base de datos");
+			return ResponseEntity.ok(response);
+		}
 		appointment = this.appointmentService.findById(idAppointment);
-		if(appointment == null) 
-			return ResponseEntity.ok("La cita no tiene agenda");
+		if(!pet.getAppointments().isEmpty()) {
+			response.put("Message", "Ya cuenta con citas reservadas");
+			return ResponseEntity.ok(response);
+		}
+		if(appointment == null) {
+			response.put("Message", "La cita no tiene agenda");
+			return ResponseEntity.ok(response);
+		}
 		if(appointment.getPet() != null) {
-			return ResponseEntity.ok("La cita se encuentra ya se encuentra reservada");
+			response.put("Message", "La cita se encuentra agendada");
+			return ResponseEntity.ok(response);
 		}
 		appointment.setPet(pet);
 		
@@ -130,6 +147,15 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 		System.out.println(id);
 		return ResponseEntity.ok(this.appointmentService.deleteById(id));
 	}
+
+	@Override
+	public ResponseEntity<List<Appointment>> list(Long idUser) {
+		// TODO Auto-generated method stub
+		return super.list(idUser);
+	}
+
+	
+	
 	
 	
 	

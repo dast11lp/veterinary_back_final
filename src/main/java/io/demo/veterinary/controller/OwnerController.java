@@ -1,6 +1,8 @@
 package io.demo.veterinary.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -66,7 +68,10 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 		
 		headers.set("Authorization", token);
 		
-		return  ResponseEntity.ok().headers(headers).body(token);
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("Authorization", token);
+		
+		return  ResponseEntity.ok().headers(headers).body(tokens);
 	}
 	
 	
@@ -75,8 +80,5 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 	public ResponseEntity<List<Pet>> petList(@RequestParam Long idUser) {
 		return ResponseEntity.ok(this.ownerService.findById(idUser).getPets());
 	}
-	
-	
-	
 	
 }

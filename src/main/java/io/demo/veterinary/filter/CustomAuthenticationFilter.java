@@ -24,7 +24,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.demo.veterinary.entity.AppUser;
 import io.demo.veterinary.jwt.JwtUtil;
+import io.demo.veterinary.repository.AppUserRepository;
 import io.demo.veterinary.service.MyUserDetailService;
 
 
@@ -34,10 +36,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 	JwtUtil jwtUtil;
 	
+	AppUserRepository userRepository;
 	
-	public CustomAuthenticationFilter(AuthenticationManager authenticationManager,JwtUtil jwtUtil) {
+	
+	public CustomAuthenticationFilter(AuthenticationManager authenticationManager,JwtUtil jwtUtil,AppUserRepository userRepository) {
 		this.authenticationManager = authenticationManager;
 		this.jwtUtil = jwtUtil;
+		this.userRepository = userRepository;
 		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/auth/login", "POST"));
 	}
 	
@@ -68,19 +73,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 		String jwt = this.jwtUtil.jwtCreator(user.getUsername());
 		
+		System.err.println(user.getUsername());
+		
 		response.setStatus(200);
 		response.setHeader("Authorization", jwt);
 		
 		Map<String, String> tokens = new HashMap<>();
 		tokens.put("Authorization", jwt);
-
+		
+		AppUser AppUser = this.userRepository.findByEmail(user.getUsername());
+		
+		tokens.put("id", AppUser.getId().toString());
+		
 		
 		response.setContentType("application/json");
 		new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-		
-		
-		
-		
 	}
 
 	@Override

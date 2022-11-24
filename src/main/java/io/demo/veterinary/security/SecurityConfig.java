@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import io.demo.veterinary.filter.CustomAuthenticationFilter;
 import io.demo.veterinary.filter.CustomAuthorizationFilter;
 import io.demo.veterinary.jwt.JwtUtil;
+import io.demo.veterinary.repository.AppUserRepository;
 
 
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -29,12 +30,15 @@ public class SecurityConfig {
 	@Autowired 
 	private CustomAuthorizationFilter authorizationFilter;
 	
+	@Autowired
+	private AppUserRepository userRepository;
+	
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 		
 		http.authorizeHttpRequests().antMatchers("/auth/**", "/owner/register").permitAll();
-		http.addFilter(new CustomAuthenticationFilter( authenticationManager,jwtUtil));
+		http.addFilter(new CustomAuthenticationFilter( authenticationManager,jwtUtil, userRepository));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeHttpRequests().anyRequest().permitAll();
 		http.csrf().disable();	

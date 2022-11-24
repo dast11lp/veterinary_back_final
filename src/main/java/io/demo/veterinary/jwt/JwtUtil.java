@@ -18,7 +18,7 @@ public class JwtUtil {
 		return JWT.create().withSubject("User Details")
 				.withClaim("email", email)
 				.withIssuedAt(new Date())
-				.withExpiresAt(new Date(System.currentTimeMillis() + 3600000 * 4 ))
+			//	.withExpiresAt(new Date(System.currentTimeMillis() + 3600000 * 4 ))
 				.withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
 				.sign(KEY);
 	}
