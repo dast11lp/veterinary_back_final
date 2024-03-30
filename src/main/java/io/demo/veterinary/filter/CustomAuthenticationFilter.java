@@ -55,12 +55,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		String email = request.getParameter("email");
 		String password = obtainPassword(request);
 		
-		
 		if(email != null) 
 			email = email.trim();
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
 				password);
+				
 
 		return this.authenticationManager.authenticate(authenticationToken);
 	}
@@ -72,8 +72,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		User user = (User) authResult.getPrincipal();
 
 		String jwt = this.jwtUtil.jwtCreator(user.getUsername());
-		
-		System.err.println(user.getUsername());
 		
 		response.setStatus(200);
 		response.setHeader("Authorization", jwt);

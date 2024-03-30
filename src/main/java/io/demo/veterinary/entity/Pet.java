@@ -34,7 +34,7 @@ public class Pet {
 	private Double high;
 
 	@Column(name = "peso_mas")
-	private String weight;
+	private Double weight;
 
 	@Column(name = "especie_mas")
 	private String species;
@@ -75,11 +75,11 @@ public class Pet {
 		this.high = high;
 	}
 
-	public String getWeight() {
+	public Double getWeight() {
 		return weight;
 	}
 
-	public void setWeight(String weight) {
+	public void setWeight(Double weight) {
 		this.weight = weight;
 	}
 

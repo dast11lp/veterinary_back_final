@@ -33,12 +33,12 @@ public class MyUserDetailService implements UserDetailsService {
 		
 		if (user == null)
 			throw new UsernameNotFoundException("the user with the email: " + email + "was not found");
+		
 		Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		
 		for (Role role: user.getRoles()) {
 			authorities.add(new SimpleGrantedAuthority(role.getRole()));
 		}
-		
 		
 		return new User(email, user.getPassword(), authorities);
 	}

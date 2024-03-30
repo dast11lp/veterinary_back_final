@@ -19,33 +19,33 @@ import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Entity(name = "user")
+@Entity(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class AppUser {
 
 	@Id
-	@Column(name = "id_user")
+	@Column(name = "id_users")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Email
-	@Column(name = "email_user")
+	@Column(name = "email_users")
 	private String email;
 
-	@Column(name = "password_user")
+	@Column(name = "password_users")
 	private String password;
 
-	@Column(name = "nombre_user")
+	@Column(name = "nombre_users")
 	private String firstname;
 
-	@Column(name = "apellido_user")
+	@Column(name = "apellido_users")
 	private String lastname;
 
-	@Column(name = "direccion_user")
+	@Column(name = "direccion_users")
 	private String address;
 
-	@Column(name = "telefefono_user")
+	@Column(name = "telefefono_users")
 	private String phoneNumber;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL, CascadeType.MERGE }, mappedBy = "users")

@@ -1,13 +1,13 @@
 spring:
-      datasource:
-                url: jdbc:mysql://localhost/veterinaria5
-                username: root
-                password: 
-                driver-class-name: com.mysql.cj.jdbc.Driver
-      jpa:
-          database-platform: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/veterinaria
+    username: postgres
+    password: whatisbeyond
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 logging:
-        level:
-              org:
-                  hibernate:
-                            SQL: debug
+  level:
+    org:
+      hibernate:
+        SQL: debug

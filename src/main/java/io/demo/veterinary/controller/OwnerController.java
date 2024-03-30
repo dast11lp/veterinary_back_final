@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import io.demo.veterinary.entity.AppUser;
 import io.demo.veterinary.entity.Owner;
 import io.demo.veterinary.entity.Pet;
 import io.demo.veterinary.entity.Role;
 import io.demo.veterinary.jwt.JwtUtil;
+import io.demo.veterinary.service.MyUserService;
 import io.demo.veterinary.service.OwnerService;
 import io.demo.veterinary.service.RoleService;
 
@@ -41,6 +42,9 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 	
 	@Autowired 
 	private OwnerService ownerService;
+	
+	@Autowired
+	private MyUserService appUserService;
 	
 
 
@@ -79,6 +83,16 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 	@PreAuthorize("@securityService.hasUser(#idUser)")
 	public ResponseEntity<List<Pet>> petList(@RequestParam Long idUser) {
 		return ResponseEntity.ok(this.ownerService.findById(idUser).getPets());
+	}
+	
+	@GetMapping("listOwner")
+	public ResponseEntity<List<Owner>> ownerList() {
+		return ResponseEntity.ok(this.ownerService.findAll());
+	}
+	
+	@GetMapping("listUsers")
+	public ResponseEntity<List<AppUser>> appList() {
+		return ResponseEntity.ok(this.appUserService.findAll());
 	}
 	
 }

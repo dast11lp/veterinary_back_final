@@ -15,6 +15,8 @@ public class JwtUtil {
 	private static final Algorithm KEY = Algorithm.HMAC256("YAVE CEQRETA");
 	
 	public String jwtCreator(String email){
+	
+		
 		return JWT.create().withSubject("User Details")
 				.withClaim("email", email)
 				.withIssuedAt(new Date())

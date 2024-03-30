@@ -27,18 +27,12 @@ public class Role {
 	@Column(name = "authority")
 	private String role;
 
-@JsonIgnore
-@ManyToMany(fetch = FetchType.LAZY,
-				cascade = {
-					CascadeType.ALL,
-					CascadeType.MERGE
-						})
-@JoinTable(name="user_authorities",
-	   joinColumns = {@JoinColumn(name="id_auth")},
-	   inverseJoinColumns = {@JoinColumn(name="id_user")}
-	)
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL, CascadeType.MERGE })
+	@JoinTable(name = "users_authorities", joinColumns = { @JoinColumn(name = "id_auth") }, inverseJoinColumns = {
+	@JoinColumn(name = "id_users") })
 	public List<AppUser> users = new ArrayList<>();
-	
+
 	public Long getId() {
 		return id;
 	}

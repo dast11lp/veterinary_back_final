@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class Owner extends AppUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_user")
+	@Column(name = "id_users")
 	private Long id;
 	
 	@JsonIgnoreProperties({"owner", "handler", "hibernateLazyInitializer"})
@@ -39,7 +39,4 @@ public class Owner extends AppUser {
 	public void setPets(java.util.List<Pet> pets) {
 		this.pets = pets;
 	}
-
-	
-
 }
