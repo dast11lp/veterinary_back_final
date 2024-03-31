@@ -1,5 +1,6 @@
 package io.demo.veterinary.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -29,7 +30,7 @@ public class Appointment {
 
 	@Column(name = "fecha_cit")
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date dateAndTime;
+	private LocalDate dateAndTime;
 
 	@Column(name = "consultorio_cit")
 	private int office;
@@ -62,7 +63,7 @@ public class Appointment {
 
 	public Appointment() {}
 
-	public Appointment(Long id, Date dateAndTime, int office, Double amount, String procedure, String description,
+	public Appointment(Long id, LocalDate dateAndTime, int office, Double amount, String procedure, String description,
 			String prescription, Veterinarian veterinarian, Pet pet) {
 		this.id = id;
 		this.dateAndTime = dateAndTime;
@@ -85,11 +86,11 @@ public class Appointment {
 
 	
 
-	public Date getDateAndTime() {
+	public LocalDate getDateAndTime() {
 		return dateAndTime;
 	}
 
-	public void setDateAndTime(Date dateAndTime) {
+	public void setDateAndTime(LocalDate dateAndTime) {
 		this.dateAndTime = dateAndTime;
 	}
 

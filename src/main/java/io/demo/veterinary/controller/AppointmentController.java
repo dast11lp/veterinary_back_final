@@ -1,6 +1,5 @@
 package io.demo.veterinary.controller;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +28,9 @@ import io.demo.veterinary.service.VeterinarianService;
 
 @RestController
 @RequestMapping("appointment")
-@CrossOrigin({"*"})
+@CrossOrigin({ "*" })
 public class AppointmentController extends BaseController<Appointment, AppointmentService> {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
 	@Autowired
@@ -39,36 +38,36 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 	@Autowired
 	private PetService petService;
-	
+
 	@Autowired
 	private AppointmentService appointmentService;
 
 	@Override
 	public ResponseEntity<?> create(@RequestBody Appointment appointment) throws Exception {
-		
+
 		if (appointment.getPet() != null)
 			return ResponseEntity.ok("no se debe asignar mascotá");
 		if (appointment.getAmount() != null)
 			return ResponseEntity.ok("no se debe asignar monto");
-		
+
 		Veterinarian vet = this.vetService.findById(appointment.getVeterinarian().getId());
-		
+
 		if (vet == null)
 			return ResponseEntity.ok("el veterinario no se encuentra en la base de datos");
-		
-		List <Appointment> appointmentsVet = vet.getAppointments();
-		
+
+		List<Appointment> appointmentsVet = vet.getAppointments();
+
 		System.out.println("CITA PEDIDA");
 		System.out.println(appointment.getDateAndTime());
-		
-		for(Appointment appoint: appointmentsVet) {
+
+		for (Appointment appoint : appointmentsVet) {
 			System.out.println("citas time");
 			System.out.println(appoint.getDateAndTime());
-			if(appoint.getDateAndTime().equals(appointment.getDateAndTime())) {
+			if (appoint.getDateAndTime().equals(appointment.getDateAndTime())) {
 				return ResponseEntity.ok("el veterinario se encuentra ocupado en esta fecha");
 			}
 		}
-		
+
 //		List <Appointment> allAppointments = this.appointmentService.findAll();
 //		
 //		for(Appointment appoint: allAppointments) {
@@ -78,7 +77,7 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 //				return ResponseEntity.ok("El consultorio se encuentra ocupado");
 //			}
 //		}
-		
+
 		return super.create(appointment);
 	}
 
@@ -88,34 +87,24 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 		return super.update(entity);
 	}
 
-	
 	@PutMapping("/cancel/{idPet}/{idAppointment}")
 	public ResponseEntity<?> cancelAppointment(@PathVariable Long idPet, @PathVariable Long idAppointment) {
-		
+
 //		Appointment appointment = this.appointmentService.updatebyId(idAppointment);
-		
-		
+
 		Appointment appointment = this.appointmentService.findById(idAppointment);
-		
+
 		appointment.getPet();
-		
-		Appointment appointmentAux = new Appointment(appointment.getId(), 
-												     appointment.getDateAndTime(), 
-												     appointment.getOffice(),
-												     appointment.getAmount(),
-												     appointment.getProcedure(),
-												     appointment.getDescription(),
-												     appointment.getPrescription(),
-												     appointment.getVeterinarian(),
-												     null);
-		
-		
+
+		Appointment appointmentAux = new Appointment(appointment.getId(), appointment.getDateAndTime(),
+				appointment.getOffice(), appointment.getAmount(), appointment.getProcedure(),
+				appointment.getDescription(), appointment.getPrescription(), appointment.getVeterinarian(), null);
+
 		return ResponseEntity.ok(this.appointmentService.save(appointmentAux));
 	}
 
-	
 	@PutMapping("request")
-	public ResponseEntity<?> requestAppointment(@RequestParam Long idPet,@RequestParam Long idAppointment) {
+	public ResponseEntity<?> requestAppointment(@RequestParam Long idPet, @RequestParam Long idAppointment) {
 		Map<String, String> response = new HashMap<>();
 		Pet pet = null;
 		Appointment appointment = null;
@@ -125,20 +114,20 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 			return ResponseEntity.ok(response);
 		}
 		appointment = this.appointmentService.findById(idAppointment);
-		if(!pet.getAppointments().isEmpty()) {
+		if (!pet.getAppointments().isEmpty()) {
 			response.put("Message", "Ya cuenta con citas reservadas");
 			return ResponseEntity.ok(response);
 		}
-		if(appointment == null) {
+		if (appointment == null) {
 			response.put("Message", "La cita no tiene agenda");
 			return ResponseEntity.ok(response);
 		}
-		if(appointment.getPet() != null) {
+		if (appointment.getPet() != null) {
 			response.put("Message", "La cita se encuentra agendada");
 			return ResponseEntity.ok(response);
 		}
 		appointment.setPet(pet);
-		
+
 		return ResponseEntity.ok(this.appointmentService.save(appointment));
 	}
 
@@ -153,11 +142,5 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 		// TODO Auto-generated method stub
 		return super.list(idUser);
 	}
-
-	
-	
-	
-	
-	
 
 }
