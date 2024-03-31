@@ -8,10 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +29,7 @@ import io.demo.veterinary.service.VeterinarianService;
 @CrossOrigin({ "*" })
 public class AppointmentController extends BaseController<Appointment, AppointmentService> {
 
-	private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
+	//private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
 	@Autowired
 	private VeterinarianService vetService;
@@ -57,13 +55,8 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 		List<Appointment> appointmentsVet = vet.getAppointments();
 
-		System.out.println("CITA PEDIDA");
-		System.out.println(appointment.getDateAndTime());
-
 		for (Appointment appoint : appointmentsVet) {
-			System.out.println("citas time");
-			System.out.println(appoint.getDateAndTime());
-			if (appoint.getDateAndTime().equals(appointment.getDateAndTime())) {
+			if (appoint.getDate().equals(appointment.getDate())) {
 				return ResponseEntity.ok("el veterinario se encuentra ocupado en esta fecha");
 			}
 		}
@@ -96,7 +89,7 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 		appointment.getPet();
 
-		Appointment appointmentAux = new Appointment(appointment.getId(), appointment.getDateAndTime(),
+		Appointment appointmentAux = new Appointment(appointment.getId(), appointment.getDate(),appointment.getHour(),
 				appointment.getOffice(), appointment.getAmount(), appointment.getProcedure(),
 				appointment.getDescription(), appointment.getPrescription(), appointment.getVeterinarian(), null);
 

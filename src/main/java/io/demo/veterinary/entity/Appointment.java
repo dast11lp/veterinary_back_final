@@ -1,9 +1,8 @@
 package io.demo.veterinary.entity;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +29,11 @@ public class Appointment {
 
 	@Column(name = "fecha_cit")
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dateAndTime;
+	private LocalDate date;
+	
+	@Column(name = "hora_cit")
+	@JsonFormat(pattern = "HH:mm:ss")
+	private LocalTime hour;
 
 	@Column(name = "consultorio_cit")
 	private int office;
@@ -63,10 +66,11 @@ public class Appointment {
 
 	public Appointment() {}
 
-	public Appointment(Long id, LocalDate dateAndTime, int office, Double amount, String procedure, String description,
+	public Appointment(Long id, LocalDate date, LocalTime hour, int office, Double amount, String procedure, String description,
 			String prescription, Veterinarian veterinarian, Pet pet) {
 		this.id = id;
-		this.dateAndTime = dateAndTime;
+		this.date = date;
+		this.hour = hour;
 		this.office = office;
 		this.amount = amount;
 		this.procedure = procedure;
@@ -86,12 +90,20 @@ public class Appointment {
 
 	
 
-	public LocalDate getDateAndTime() {
-		return dateAndTime;
+	public LocalDate getDate() {
+		return date;
 	}
 
-	public void setDateAndTime(LocalDate dateAndTime) {
-		this.dateAndTime = dateAndTime;
+	public void setDateAndTime(LocalDate date) {
+		this.date = date;
+	}
+	
+	public LocalTime getHour() {
+		return hour;
+	}
+	
+	public void setHour(LocalTime hour) {
+		this.hour = hour;
 	}
 
 	public int getOffice() {
