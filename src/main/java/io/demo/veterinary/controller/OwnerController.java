@@ -50,9 +50,14 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 
 	@PostMapping("register")
 	public ResponseEntity<?> create(@RequestBody Owner owner) throws Exception {
-		
+
+		AppUser user = this.appUserService.findByEmail(owner.getEmail());
+
+		if(user != null)
+			return ResponseEntity.badRequest().body("The user already exists");
+
 		if(owner.getPassword() == null)
-			return ResponseEntity.ok("missing password");
+			return ResponseEntity.badRequest().body("missing password");
 		
 		owner.setPassword(passwordEncoder.encode(owner.getPassword()));
 		
@@ -77,8 +82,8 @@ public class OwnerController extends BaseController<Owner, OwnerService>{
 		
 		return  ResponseEntity.ok().headers(headers).body(tokens);
 	}
-	
-	
+
+
 	@GetMapping("/pet-list")
 	@PreAuthorize("@securityService.hasUser(#idUser)")
 	public ResponseEntity<List<Pet>> petList(@RequestParam Long idUser) {

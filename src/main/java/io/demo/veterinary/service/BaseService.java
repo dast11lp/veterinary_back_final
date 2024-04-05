@@ -17,7 +17,7 @@ public class BaseService <E, R extends JpaRepository<E, Long>>{
 		return this.repository.findAll();
 	}
 	
-	public E save(E entity) {
+	public E save(E entity)  {
 		return this.repository.save(entity);
 	}
 	

@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +31,6 @@ import io.demo.veterinary.service.VeterinarianService;
 public class AppointmentController extends BaseController<Appointment, AppointmentService> {
 
 	//private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
-
 	@Autowired
 	private VeterinarianService vetService;
 
@@ -43,34 +43,26 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 	@Override
 	public ResponseEntity<?> create(@RequestBody Appointment appointment) throws Exception {
 
+		// este if se deberia eliminar, deberia hacerse un dto en vez de el appointment directamente
+		// omitiendo el campo pet
 		if (appointment.getPet() != null)
-			return ResponseEntity.ok("no se debe asignar mascotá");
+			return ResponseEntity.ok("");
+
 		if (appointment.getAmount() != null)
-			return ResponseEntity.ok("no se debe asignar monto");
+			return ResponseEntity.ok("");
 
 		Veterinarian vet = this.vetService.findById(appointment.getVeterinarian().getId());
 
 		if (vet == null)
-			return ResponseEntity.ok("el veterinario no se encuentra en la base de datos");
+			return ResponseEntity.notFound().build();
 
 		List<Appointment> appointmentsVet = vet.getAppointments();
 
 		for (Appointment appoint : appointmentsVet) {
 			if (appoint.getDate().equals(appointment.getDate())) {
-				return ResponseEntity.ok("el veterinario se encuentra ocupado en esta fecha");
+				return ResponseEntity.ok("");
 			}
 		}
-
-//		List <Appointment> allAppointments = this.appointmentService.findAll();
-//		
-//		for(Appointment appoint: allAppointments) {
-//			System.out.println("citas time");
-//			System.out.println(appoint.getDateAndTime());
-//			if(appoint.getDateAndTime().equals(appointment.getDateAndTime())) {
-//				return ResponseEntity.ok("El consultorio se encuentra ocupado");
-//			}
-//		}
-
 		return super.create(appointment);
 	}
 
@@ -83,11 +75,10 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 	@PutMapping("/cancel/{idPet}/{idAppointment}")
 	public ResponseEntity<?> cancelAppointment(@PathVariable Long idPet, @PathVariable Long idAppointment) {
 
-//		Appointment appointment = this.appointmentService.updatebyId(idAppointment);
-
 		Appointment appointment = this.appointmentService.findById(idAppointment);
 
-		appointment.getPet();
+		if (appointment == null)
+			return ResponseEntity.notFound().build();
 
 		Appointment appointmentAux = new Appointment(appointment.getId(), appointment.getDate(),appointment.getHour(),
 				appointment.getOffice(), appointment.getAmount(), appointment.getProcedure(),
@@ -99,25 +90,25 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 	@PutMapping("request")
 	public ResponseEntity<?> requestAppointment(@RequestParam Long idPet, @RequestParam Long idAppointment) {
 		Map<String, String> response = new HashMap<>();
-		Pet pet = null;
-		Appointment appointment = null;
+		Pet pet;
+		Appointment appointment;
 		pet = this.petService.findById(idPet);
 		if (pet == null) {
 			response.put("Message", "la mascota no se encuentra en la base de datos");
-			return ResponseEntity.ok(response);
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		appointment = this.appointmentService.findById(idAppointment);
 		if (!pet.getAppointments().isEmpty()) {
 			response.put("Message", "Ya cuenta con citas reservadas");
-			return ResponseEntity.ok(response);
+			return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
 		}
 		if (appointment == null) {
 			response.put("Message", "La cita no tiene agenda");
-			return ResponseEntity.ok(response);
+			return ResponseEntity.notFound().build();
 		}
 		if (appointment.getPet() != null) {
 			response.put("Message", "La cita se encuentra agendada");
-			return ResponseEntity.ok(response);
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 		}
 		appointment.setPet(pet);
 
@@ -132,8 +123,6 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 	@Override
 	public ResponseEntity<List<Appointment>> list(Long idUser) {
-		// TODO Auto-generated method stub
 		return super.list(idUser);
 	}
-
 }

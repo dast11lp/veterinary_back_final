@@ -30,7 +30,7 @@ public class AppUser {
 	private Long id;
 
 	@Email
-	@Column(name = "email_users")
+	@Column(name = "email_users", unique = true)
 	private String email;
 
 	@Column(name = "password_users")

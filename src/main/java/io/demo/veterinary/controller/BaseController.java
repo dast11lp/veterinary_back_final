@@ -24,7 +24,10 @@ public abstract class BaseController <E, S extends BaseService<E, ?>>{
 	
 	@GetMapping("/details")
 	public ResponseEntity<?> deteils(@RequestParam Long id){
-		return ResponseEntity.ok(this.service.findById(id));
+		var service = this.service.findById(id);
+		if (service == null)
+			return ResponseEntity.notFound().build();
+		return ResponseEntity.ok(service);
 	}
 	
 	@GetMapping("/list")
