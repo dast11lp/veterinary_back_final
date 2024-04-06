@@ -1,22 +1,17 @@
 package io.demo.veterinary.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
+import io.demo.veterinary.entity.AppUser;
+import io.demo.veterinary.models.HourAvailable;
+import io.demo.veterinary.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import io.demo.veterinary.entity.Appointment;
 import io.demo.veterinary.entity.Pet;
@@ -39,6 +34,59 @@ public class AppointmentController extends BaseController<Appointment, Appointme
 
 	@Autowired
 	private AppointmentService appointmentService;
+
+	@Autowired
+	private MyUserService myUserService;
+
+	@PreAuthorize("@securityService.hasUser(#idUser)")
+	@GetMapping("/dates")
+	public ResponseEntity<?> listAppointDates(@RequestParam Long idUser) {
+		AppUser user = this.myUserService.findById(idUser);
+		if (user == null)
+			return ResponseEntity.badRequest().build();
+
+		List<Appointment> appointments = this.appointmentService.findAll();
+
+		List<Appointment> appointmentsAvailable = new ArrayList<>();
+
+		for (Appointment appointment: appointments) {
+			if(appointment.getPet() == null) {
+				appointmentsAvailable.add(appointment);
+			}
+		}
+
+		if(appointmentsAvailable.isEmpty()){
+			HashMap<String, String> response = new HashMap<>();
+			response.put("message", "No hay citas disponibles");
+			return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+		}
+
+		return ResponseEntity.ok(appointmentsAvailable);
+	}
+
+	@PreAuthorize("@securityService.hasUser(#idUser)")
+	@GetMapping("/hours")
+	public ResponseEntity<?> listAppointHours(@RequestParam Long idUser) {
+		AppUser user = this.myUserService.findById(idUser);
+		if (user == null)
+			return ResponseEntity.badRequest().build();
+
+		List<Appointment> appointments = this.appointmentService.findAll();
+
+		ArrayList<HourAvailable> availablesHour = new ArrayList<>();
+
+		for (Appointment appointment: appointments) {
+			if(appointment.getPet() == null) {
+				availablesHour.add(new HourAvailable(
+						appointment.getId(),
+						appointment.getVeterinarian().getFirstname(),
+						appointment.getHour())
+				);
+			}
+		}
+
+		return ResponseEntity.ok(availablesHour);
+	}
 
 	@Override
 	public ResponseEntity<?> create(@RequestBody Appointment appointment) throws Exception {

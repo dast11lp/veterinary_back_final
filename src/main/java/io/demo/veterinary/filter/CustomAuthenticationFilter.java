@@ -65,6 +65,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		return this.authenticationManager.authenticate(authenticationToken);
 	}
 
+
+
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
