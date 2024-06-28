@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-0-sa-east-1.pooler.supabase.com:5432/postgres?user=postgres.nvkruwbcnfretedivoot&password=c14nyDel0v32024
+    username: postgres.nvkruwbcnfretedivoot
+    password: c14nyDel0v32024
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+
