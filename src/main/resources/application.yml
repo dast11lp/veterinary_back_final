@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/veterinary
+    url: jdbc:postgresql://localhost:5432/vetCare
     username: postgres
     password: whatisbeyond
     driver-class-name: org.postgresql.Driver
